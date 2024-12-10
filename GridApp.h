@@ -5,12 +5,15 @@
 #ifndef GRID_APP_H
 #define GRID_APP_H
 
-#include <QTimer>
+#include <QFile>
 #include <QGridLayout>
 #include <QLabel>
-#include <QtNetwork/QNetworkAccessManager>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QtNetwork/QNetworkReply>
 #include <QPushButton>
 #include <QRandomGenerator>
+#include <QTimer>
 #include <QWidget>
 #include <unordered_set>
 
@@ -18,11 +21,10 @@
 class GridApp final : public QWidget {
     Q_OBJECT
 private:
-    QWidget* gridWidget;
-    QGridLayout* gridLayout;
     QHBoxLayout* mainLayout;
     QVBoxLayout* leftLayout;
     QVBoxLayout* infoLayout;
+    QGridLayout* gridLayout;
     QLabel* clickCounterLabel;
     QLabel* timeLabel;
     QLabel* temperatureLabel;
@@ -30,6 +32,7 @@ private:
     QNetworkAccessManager* networkManager;
     int clickCounter;
     int nSquares;
+    static const QString configFilePath;
 
 public:
     static const QStringList colors;
@@ -45,15 +48,21 @@ public:
 private:
     void setupUI();
 
+    void initColors();
+
     void handleSquareClick();
 
-    void updateTimeAndTemperature() const;
+    void updateTimeAndTemperature();
 
-    void initColors();
+    void handleNetworkReply(QNetworkReply* reply) const;
+
+    void fetchTemperature();
 
     QString getFreeColor() const;
 
     void updateUsingColors(const QString& addColor, const QString& removeColor);
+
+    static QString getApiKey();
 };
 
 #include "main.moc"
